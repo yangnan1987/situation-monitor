@@ -8,6 +8,7 @@ export interface PanelConfig {
 }
 
 export type PanelId =
+	| 'usdjpy'
 	| 'map'
 	| 'politics'
 	| 'tech'
@@ -35,6 +36,7 @@ export type PanelId =
 	| 'fed';
 
 export const PANELS: Record<PanelId, PanelConfig> = {
+	usdjpy: { name: '汇率', priority: 1 },
 	map: { name: 'Global Map', priority: 1 },
 	politics: { name: 'World / Geopolitical', priority: 1 },
 	tech: { name: 'Technology / AI', priority: 1 },

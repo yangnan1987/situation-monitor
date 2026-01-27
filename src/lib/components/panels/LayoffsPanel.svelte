@@ -20,9 +20,9 @@
 	const count = $derived(layoffs.length);
 </script>
 
-<Panel id="layoffs" title="Layoffs Tracker" {count} {loading} {error}>
+<Panel id="layoffs" title="裁员追踪" {count} {loading} {error}>
 	{#if layoffs.length === 0 && !loading && !error}
-		<div class="empty-state">No recent layoffs data</div>
+		<div class="empty-state">暂无近期裁员数据</div>
 	{:else}
 		<div class="layoffs-list">
 			{#each layoffs as layoff, i (layoff.company + i)}
@@ -32,7 +32,7 @@
 						<div class="layoff-count">
 							{typeof layoff.count === 'string'
 								? parseInt(layoff.count).toLocaleString()
-								: layoff.count.toLocaleString()} jobs
+								: layoff.count.toLocaleString()} 个岗位
 						</div>
 					{/if}
 					<div class="layoff-meta">

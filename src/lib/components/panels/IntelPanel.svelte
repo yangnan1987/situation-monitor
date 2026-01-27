@@ -63,9 +63,9 @@
 	}
 </script>
 
-<Panel id="intel" title="Intel Feed" {count} {loading} {error}>
+<Panel id="intel" title="情报源" {count} {loading} {error}>
 	{#if items.length === 0 && !loading && !error}
-		<div class="empty-state">No intel available</div>
+		<div class="empty-state">暂无情报</div>
 	{:else}
 		<div class="intel-list">
 			{#each items as item (item.id)}

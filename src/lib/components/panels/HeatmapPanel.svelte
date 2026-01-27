@@ -7,9 +7,9 @@
 	const error = $derived($sectors.error);
 </script>
 
-<Panel id="heatmap" title="Sector Heatmap" {loading} {error}>
+<Panel id="heatmap" title="板块热力图" {loading} {error}>
 	{#if items.length === 0 && !loading && !error}
-		<div class="empty-state">No sector data available</div>
+		<div class="empty-state">暂无板块数据</div>
 	{:else}
 		<div class="heatmap-grid">
 			{#each items as sector (sector.symbol)}

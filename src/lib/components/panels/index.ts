@@ -1,4 +1,5 @@
 // Panel components barrel export
+export { default as USDJPYPanel } from './USDJPYPanel.svelte';
 export { default as NewsPanel } from './NewsPanel.svelte';
 export { default as MarketsPanel } from './MarketsPanel.svelte';
 export { default as HeatmapPanel } from './HeatmapPanel.svelte';

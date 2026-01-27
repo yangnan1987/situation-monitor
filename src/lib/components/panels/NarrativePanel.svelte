@@ -42,14 +42,14 @@
 	}
 </script>
 
-<Panel id="narrative" title="Narrative Tracker" {loading} {error}>
+<Panel id="narrative" title="叙事追踪" {loading} {error}>
 	{#if news.length === 0 && !loading && !error}
-		<div class="empty-state">Insufficient data for narrative analysis</div>
+		<div class="empty-state">数据不足，无法进行叙事分析</div>
 	{:else if analysis}
 		<div class="narrative-content">
 			{#if analysis.emergingFringe.length > 0}
 				<div class="section">
-					<div class="section-title">Emerging Fringe</div>
+					<div class="section-title">新兴边缘</div>
 					{#each analysis.emergingFringe.slice(0, 4) as narrative}
 						<div class="narrative-item">
 							<div class="narrative-header">
@@ -60,7 +60,7 @@
 								/>
 							</div>
 							<div class="narrative-meta">
-								<span class="mention-count">{narrative.count} mentions</span>
+								<span class="mention-count">{narrative.count} 次提及</span>
 							</div>
 							{#if narrative.sources.length > 0}
 								<div class="narrative-sources">
@@ -74,17 +74,17 @@
 
 			{#if analysis.fringeToMainstream.length > 0}
 				<div class="section">
-					<div class="section-title">Fringe → Mainstream Crossovers</div>
+					<div class="section-title">边缘 → 主流交叉</div>
 					{#each analysis.fringeToMainstream.slice(0, 3) as crossover}
 						<div class="crossover-item">
 							<div class="crossover-narrative">{crossover.name}</div>
 							<div class="crossover-path">
-								<span class="from">Fringe ({crossover.fringeCount})</span>
+								<span class="from">边缘 ({crossover.fringeCount})</span>
 								<span class="arrow">→</span>
-								<span class="to">Mainstream ({crossover.mainstreamCount})</span>
+								<span class="to">主流 ({crossover.mainstreamCount})</span>
 							</div>
 							<div class="crossover-level">
-								Crossover level: {Math.round(crossover.crossoverLevel * 100)}%
+								交叉程度: {Math.round(crossover.crossoverLevel * 100)}%
 							</div>
 						</div>
 					{/each}
@@ -93,7 +93,7 @@
 
 			{#if analysis.narrativeWatch.length > 0}
 				<div class="section">
-					<div class="section-title">Narrative Watch</div>
+					<div class="section-title">叙事观察</div>
 					<div class="themes-grid">
 						{#each analysis.narrativeWatch.slice(0, 6) as narrative}
 							<div class="theme-tag">
@@ -107,7 +107,7 @@
 
 			{#if analysis.disinfoSignals.length > 0}
 				<div class="section">
-					<div class="section-title">Disinfo Signals</div>
+					<div class="section-title">虚假信息信号</div>
 					{#each analysis.disinfoSignals.slice(0, 3) as signal}
 						<div class="disinfo-item">
 							<div class="disinfo-header">
@@ -117,18 +117,18 @@
 									variant={getSeverityVariant(signal.severity)}
 								/>
 							</div>
-							<div class="disinfo-meta">{signal.count} mentions</div>
+							<div class="disinfo-meta">{signal.count} 次提及</div>
 						</div>
 					{/each}
 				</div>
 			{/if}
 
 			{#if analysis.emergingFringe.length === 0 && analysis.fringeToMainstream.length === 0}
-				<div class="empty-state">No significant narratives detected</div>
+				<div class="empty-state">未检测到显著叙事</div>
 			{/if}
 		</div>
 	{:else}
-		<div class="empty-state">No significant narratives detected</div>
+		<div class="empty-state">未检测到显著叙事</div>
 	{/if}
 </Panel>
 

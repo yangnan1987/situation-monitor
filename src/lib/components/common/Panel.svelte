@@ -78,7 +78,7 @@
 		{#if error}
 			<div class="error-msg">{error}</div>
 		{:else if loading}
-			<div class="loading-msg">Loading...</div>
+			<div class="loading-msg">加载中...</div>
 		{:else}
 			{@render children()}
 		{/if}

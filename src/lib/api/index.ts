@@ -15,3 +15,13 @@ export type { Prediction, WhaleTransaction, Contract, Layoff } from './misc';
 export { fetchWorldLeaders } from './leaders';
 export { fetchFedIndicators, fetchFedNews, isFredConfigured } from './fred';
 export type { FedIndicators, EconomicIndicator, FedNewsItem, FedNewsType } from './fred';
+export {
+	fetchUSDJPY,
+	fetchUSDJPYFromYahoo,
+	fetchUSDJPYWithFallback,
+	fetchUSDCNY,
+	fetchUSDCNYFromYahoo,
+	fetchUSDCNYWithFallback,
+	fetchForexRates
+} from './forex';
+export type { ForexRate } from './forex';
