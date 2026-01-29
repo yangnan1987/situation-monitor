@@ -208,16 +208,129 @@ export async function fetchUSDCNYWithFallback(): Promise<ForexRate | null> {
 }
 
 /**
+ * Calculate CNY/JPY rate from USD/JPY and USD/CNY
+ * Formula: CNY/JPY = USD/JPY / USD/CNY
+ * (How many JPY equals 1 CNY)
+ */
+export function calculateCNYJPY(
+	usdJpy: ForexRate | null,
+	usdCny: ForexRate | null
+): ForexRate | null {
+	if (!usdJpy || !usdCny || usdCny.rate === 0) {
+		return null;
+	}
+
+	const cnyjpyRate = usdJpy.rate / usdCny.rate;
+
+	// Calculate change if both USD/JPY and USD/CNY have change data
+	let change: number | undefined;
+	let changePercent: number | undefined;
+
+	if (
+		usdJpy.change !== undefined &&
+		usdCny.change !== undefined &&
+		usdJpy.changePercent !== undefined &&
+		usdCny.changePercent !== undefined
+	) {
+		// Approximate change calculation
+		// If USD/JPY goes up and USD/CNY goes down, CNY/JPY goes up more
+		// If USD/JPY goes up and USD/CNY goes up, effect is dampened
+		const jpyChangePercent = usdJpy.changePercent;
+		const cnyChangePercent = usdCny.changePercent;
+
+		// Combined percentage change (approximate)
+		changePercent = jpyChangePercent - cnyChangePercent;
+
+		// Calculate absolute change
+		const previousRate = cnyjpyRate / (1 + changePercent / 100);
+		change = cnyjpyRate - previousRate;
+	}
+
+	return {
+		symbol: 'CNY/JPY',
+		rate: cnyjpyRate,
+		change,
+		changePercent,
+		timestamp: Math.max(usdJpy.timestamp, usdCny.timestamp)
+	};
+}
+
+/**
+ * Try to fetch CNY/JPY directly from Yahoo Finance
+ * If not available, calculate from USD/JPY and USD/CNY
+ */
+export async function fetchCNYJPY(
+	usdJpy?: ForexRate | null,
+	usdCny?: ForexRate | null
+): Promise<ForexRate | null> {
+	try {
+		// Try Yahoo Finance directly first
+		const url = 'https://query1.finance.yahoo.com/v8/finance/chart/CNYJPY=X';
+
+		logger.log('Forex API', 'Fetching CNY/JPY from Yahoo Finance');
+
+		const response = await fetchWithProxy(url);
+		if (response.ok) {
+			const data = await response.json();
+			const result = data.chart?.result?.[0];
+
+			if (result) {
+				const meta = result.meta;
+				const regularMarketPrice = meta?.regularMarketPrice;
+				const previousClose = meta?.previousClose;
+
+				if (regularMarketPrice && typeof regularMarketPrice === 'number') {
+					const change = previousClose ? regularMarketPrice - previousClose : undefined;
+					const changePercent =
+						previousClose && change !== undefined ? (change / previousClose) * 100 : undefined;
+
+					logger.log('Forex API', 'Successfully fetched CNY/JPY directly from Yahoo');
+
+					return {
+						symbol: 'CNY/JPY',
+						rate: regularMarketPrice,
+						change,
+						changePercent,
+						timestamp: Date.now()
+					};
+				}
+			}
+		}
+	} catch (error) {
+		logger.warn('Forex API', 'Direct CNY/JPY fetch failed, will calculate from USD rates');
+	}
+
+	// Fallback: Calculate from USD/JPY and USD/CNY
+	logger.log('Forex API', 'Calculating CNY/JPY from USD/JPY and USD/CNY');
+
+	// If rates not provided, fetch them
+	if (!usdJpy || !usdCny) {
+		const [jpyData, cnyData] = await Promise.all([
+			usdJpy || fetchUSDJPYWithFallback(),
+			usdCny || fetchUSDCNYWithFallback()
+		]);
+
+		return calculateCNYJPY(jpyData, cnyData);
+	}
+
+	return calculateCNYJPY(usdJpy, usdCny);
+}
+
+/**
  * Fetch both USD/JPY and USD/CNY rates
  */
 export async function fetchForexRates(): Promise<{
 	jpy: ForexRate | null;
 	cny: ForexRate | null;
+	cnyjpy: ForexRate | null;
 }> {
 	const [jpy, cny] = await Promise.all([
 		fetchUSDJPYWithFallback(),
 		fetchUSDCNYWithFallback()
 	]);
 
-	return { jpy, cny };
+	// Calculate or fetch CNY/JPY
+	const cnyjpy = await fetchCNYJPY(jpy, cny);
+
+	return { jpy, cny, cnyjpy };
 }

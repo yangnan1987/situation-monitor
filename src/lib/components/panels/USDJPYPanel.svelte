@@ -7,6 +7,7 @@
 
 	let jpyRate = $state<ForexRate | null>(null);
 	let cnyRate = $state<ForexRate | null>(null);
+	let cnyjpyRate = $state<ForexRate | null>(null);
 	let loading = $state(false);
 	let error = $state<string | null>(null);
 	let refreshInterval: ReturnType<typeof setInterval> | null = null;
@@ -18,8 +19,9 @@
 			const data = await fetchForexRates();
 			jpyRate = data.jpy;
 			cnyRate = data.cny;
+			cnyjpyRate = data.cnyjpy;
 			
-			if (!jpyRate && !cnyRate) {
+			if (!jpyRate && !cnyRate && !cnyjpyRate) {
 				error = '无法获取汇率数据';
 			}
 		} catch (err) {
@@ -62,7 +64,7 @@
 </script>
 
 <Panel id="usdjpy" title="汇率" {loading} {error}>
-	{#if jpyRate || cnyRate}
+	{#if jpyRate || cnyRate || cnyjpyRate}
 		<div class="forex-display">
 			<!-- USD/JPY -->
 			{#if jpyRate}
@@ -110,10 +112,33 @@
 				</div>
 			{/if}
 
+			<!-- CNY/JPY (新增) -->
+			{#if cnyjpyRate}
+				<div class="forex-item">
+					<div class="forex-header">
+						<div class="forex-symbol">CNY/JPY</div>
+						<div class="forex-label">人民币/日元</div>
+					</div>
+					<div class="rate-main">
+						<div class="rate-value">{formatRate(cnyjpyRate)}</div>
+					</div>
+					{#if cnyjpyRate.changePercent !== undefined}
+						<div class="rate-change">
+							<div class="change-value {getChangeClassForRate(cnyjpyRate)}">
+								{cnyjpyRate.change !== undefined && cnyjpyRate.change > 0 ? '+' : ''}{formatChangeValue(cnyjpyRate)}
+							</div>
+							<div class="change-percent {getChangeClassForRate(cnyjpyRate)}">
+								{formatChange(cnyjpyRate)}
+							</div>
+						</div>
+					{/if}
+				</div>
+			{/if}
+
 			<!-- Timestamp -->
-			{#if jpyRate || cnyRate}
+			{#if jpyRate || cnyRate || cnyjpyRate}
 				<div class="rate-timestamp">
-					更新时间: {new Date((jpyRate || cnyRate)!.timestamp).toLocaleTimeString('zh-CN')}
+					更新时间: {new Date((jpyRate || cnyRate || cnyjpyRate)!.timestamp).toLocaleTimeString('zh-CN')}
 				</div>
 			{/if}
 		</div>
