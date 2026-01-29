@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Modal from './Modal.svelte';
-	import { settings } from '$lib/stores';
+	import { settings, layout } from '$lib/stores';
 	import { PANELS, type PanelId } from '$lib/config';
 
 	interface Props {
@@ -17,6 +17,12 @@
 
 	function handleResetPanels() {
 		settings.reset();
+	}
+
+	function handleResetLayout() {
+		if (confirm('确定要重置布局吗？这将恢复所有面板的默认位置和大小。')) {
+			layout.resetLayout();
+		}
 	}
 </script>
 
@@ -49,6 +55,10 @@
 				<button class="reconfigure-btn" onclick={onReconfigure}> 重新配置仪表板 </button>
 				<p class="btn-hint">为您的面板选择一个预设配置</p>
 			{/if}
+			<button class="reset-layout-btn" onclick={handleResetLayout}>
+				重置面板布局
+			</button>
+			<p class="btn-hint">恢复所有面板的默认位置和大小</p>
 			<button class="reset-btn" onclick={handleResetPanels}> 重置所有设置 </button>
 		</section>
 	</div>
@@ -147,6 +157,22 @@
 		font-size: 0.6rem;
 		color: var(--text-muted);
 		margin: 0 0 0.75rem;
+	}
+
+	.reset-layout-btn {
+		padding: 0.5rem 1rem;
+		background: rgba(255, 165, 0, 0.1);
+		border: 1px solid rgba(255, 165, 0, 0.3);
+		border-radius: 4px;
+		color: #ffa500;
+		font-size: 0.7rem;
+		cursor: pointer;
+		transition: all 0.15s ease;
+		margin-bottom: 0.25rem;
+	}
+
+	.reset-layout-btn:hover {
+		background: rgba(255, 165, 0, 0.2);
 	}
 
 	.reset-btn {

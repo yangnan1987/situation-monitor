@@ -44,6 +44,18 @@
 </script>
 
 <div class="panel" class:draggable class:collapsed data-panel-id={id}>
+	<!-- 拖拽手柄 -->
+	{#if draggable}
+		<div class="drag-handle" title="拖动面板">
+			<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+				<circle cx="3" cy="3" r="1.5" />
+				<circle cx="9" cy="3" r="1.5" />
+				<circle cx="3" cy="9" r="1.5" />
+				<circle cx="9" cy="9" r="1.5" />
+			</svg>
+		</div>
+	{/if}
+
 	<div class="panel-header">
 		<div class="panel-title-row">
 			<h3 class="panel-title">{title}</h3>
@@ -83,6 +95,16 @@
 			{@render children()}
 		{/if}
 	</div>
+
+	<!-- 调整大小手柄 -->
+	{#if draggable}
+		<div class="resize-handle" title="调整大小">
+			<svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+				<path d="M12 12L12 8L8 12Z" />
+				<path d="M12 6L6 12Z" opacity="0.6" />
+			</svg>
+		</div>
+	{/if}
 </div>
 
 <style>
@@ -93,24 +115,79 @@
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
+		position: relative;
+		height: 100%;
 	}
 
 	.panel.draggable {
-		cursor: grab;
+		cursor: default;
 	}
 
 	.panel.draggable:active {
+		cursor: default;
+	}
+
+	/* 拖拽手柄 */
+	.drag-handle {
+		position: absolute;
+		top: 8px;
+		left: 8px;
+		width: 24px;
+		height: 24px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: grab;
+		color: var(--text-secondary);
+		opacity: 0.5;
+		transition: opacity 0.2s;
+		z-index: 10;
+		border-radius: 4px;
+		background: var(--surface);
+	}
+
+	.drag-handle:hover {
+		opacity: 1;
+		background: rgba(255, 255, 255, 0.05);
+	}
+
+	.drag-handle:active {
 		cursor: grabbing;
+	}
+
+	/* 调整大小手柄 */
+	.resize-handle {
+		position: absolute;
+		bottom: 4px;
+		right: 4px;
+		width: 20px;
+		height: 20px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: nwse-resize;
+		color: var(--text-secondary);
+		opacity: 0.4;
+		transition: opacity 0.2s;
+		z-index: 10;
+	}
+
+	.resize-handle:hover {
+		opacity: 1;
 	}
 
 	.panel-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0.5rem 0.75rem;
+		padding: 0.5rem 0.75rem 0.5rem 2.5rem; /* 左侧增加空间给拖拽手柄 */
 		background: var(--surface);
 		border-bottom: 1px solid var(--border);
 		min-height: 2rem;
+	}
+
+	.panel:not(.draggable) .panel-header {
+		padding-left: 0.75rem; /* 非拖拽面板保持原样 */
 	}
 
 	.panel-title-row {

@@ -32,7 +32,8 @@
 		refresh,
 		allNewsItems,
 		fedIndicators,
-		fedNews
+		fedNews,
+		layout
 	} from '$lib/stores';
 	import {
 		fetchAllNews,
@@ -187,6 +188,9 @@
 
 	// Initial load
 	onMount(() => {
+		// 初始化布局 store（从 localStorage 加载布局）
+		layout.init();
+
 		// Check if first visit
 		if (!settings.isOnboardingComplete()) {
 			onboardingOpen = true;
