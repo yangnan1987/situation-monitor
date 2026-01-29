@@ -156,6 +156,32 @@
 	});
 </script>
 
+<!-- 拖拽和调整大小的全局事件监听 -->
+<svelte:window
+	onmousedown={(e) => {
+		// 检查是否点击了拖拽手柄
+		const target = e.target as HTMLElement;
+		const dragHandle = target.closest('.drag-handle');
+		if (dragHandle) {
+			const panelElement = dragHandle.closest('[data-panel-id]') as HTMLElement;
+			if (panelElement) {
+				const panelId = panelElement.dataset.panelId as PanelId;
+				handleDragStart(e, panelId);
+			}
+		}
+
+		// 检查是否点击了调整大小手柄
+		const resizeHandle = target.closest('.resize-handle');
+		if (resizeHandle) {
+			const panelElement = resizeHandle.closest('[data-panel-id]') as HTMLElement;
+			if (panelElement) {
+				const panelId = panelElement.dataset.panelId as PanelId;
+				handleResizeStart(e, panelId);
+			}
+		}
+	}}
+/>
+
 <main class="dashboard">
 	<div
 		class="dashboard-grid"
@@ -163,32 +189,6 @@
 	>
 		{@render children()}
 	</div>
-
-	<!-- 拖拽手柄提示（可选） -->
-	<svelte:window
-		onmousedown={(e) => {
-			// 检查是否点击了拖拽手柄
-			const target = e.target as HTMLElement;
-			const dragHandle = target.closest('.drag-handle');
-			if (dragHandle) {
-				const panelElement = dragHandle.closest('[data-panel-id]') as HTMLElement;
-				if (panelElement) {
-					const panelId = panelElement.dataset.panelId as PanelId;
-					handleDragStart(e, panelId);
-				}
-			}
-
-			// 检查是否点击了调整大小手柄
-			const resizeHandle = target.closest('.resize-handle');
-			if (resizeHandle) {
-				const panelElement = resizeHandle.closest('[data-panel-id]') as HTMLElement;
-				if (panelElement) {
-					const panelId = panelElement.dataset.panelId as PanelId;
-					handleResizeStart(e, panelId);
-				}
-			}
-		}}
-	/>
 </main>
 
 <style>
