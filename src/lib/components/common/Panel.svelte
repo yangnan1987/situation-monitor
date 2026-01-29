@@ -27,7 +27,7 @@
 		statusClass = '',
 		loading = false,
 		error = null,
-		draggable = true,
+		draggable = false, // 暂时禁用拖拽功能
 		collapsible = false,
 		collapsed = false,
 		onCollapse,
@@ -116,7 +116,8 @@
 		display: flex;
 		flex-direction: column;
 		position: relative;
-		height: 100%;
+		/* 移除固定高度，让内容自动决定 */
+		min-height: 200px;
 	}
 
 	.panel.draggable {
@@ -180,14 +181,10 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 0.5rem 0.75rem 0.5rem 2.5rem; /* 左侧增加空间给拖拽手柄 */
+		padding: 0.5rem 0.75rem;
 		background: var(--surface);
 		border-bottom: 1px solid var(--border);
 		min-height: 2rem;
-	}
-
-	.panel:not(.draggable) .panel-header {
-		padding-left: 0.75rem; /* 非拖拽面板保持原样 */
 	}
 
 	.panel-title-row {
